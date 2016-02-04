@@ -107,20 +107,3 @@ $0/_export_ () {
 uze/import/$0 () {
     EXPORT_TAGS=( :all 'ok prove is note expected diag' )
 }
-
-uzu/devel/TAP () {
-    warn $0 is deprecated, use uze instead
-    for uzu_tag {
-        case $uzu_tag {
-            (:all) UZU_EXPORT+=( ok prove is note expected diag ) ;;
-            (ok|prove|is|note) UZU_EXPORT+=( $uzu_tag ) ;;
-            (*)  warn "invalid tag $uzu_tag while uzu $@"
-                false
-                return
-            ;;
-        }
-    }
-    true
-}
-
-$0/expected () { devel/TAP/is "$got" "$expected" "$1" }
