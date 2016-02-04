@@ -1,4 +1,4 @@
-shush uze devel/TAP :all ||exit
+uze devel/TAP :all
 
 does_return_works () {
     local cmd ret
