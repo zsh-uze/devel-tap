@@ -72,8 +72,9 @@ $0/ok () {
         print "not ok $[++_test_tap_index] $1"
     }
     return $_tap_test_r
-
 }
+
+$0/not_ok () { ! (( $? )); ok "$@" }
 
 $0/note () {
     local r=$?
@@ -88,8 +89,8 @@ $0/note- () {
     return $r
 }
 
-$0/is   () { [[ "$1" == "$2" ]];  devel/TAP/ok "$3" }
-$0/isnt () { ![[ "$1" == "$2" ]]; devel/TAP/ok "$3" }
+$0/is   () {   [[ "$1" == "$2" ]]; devel/TAP/ok "$3" }
+$0/isnt () { ! [[ "$1" == "$2" ]]; devel/TAP/ok "$3" }
 
 # _export_ seems to be a good idea
 # :_oo_methods for objects ?
