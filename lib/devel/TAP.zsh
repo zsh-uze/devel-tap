@@ -91,6 +91,8 @@ $0/note- () {
 
 $0/is   () {   [[ "$1" == "$2" ]]; devel/TAP/ok "$3" }
 $0/isnt () { ! [[ "$1" == "$2" ]]; devel/TAP/ok "$3" }
+$0/expected   () { devel/TAP/is   "$got" "$expected" "$1" }
+$0/unexpected () { devel/TAP/isnt "$got" "$expected" "$1" }
 
 # _export_ seems to be a good idea
 # :_oo_methods for objects ?
