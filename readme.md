@@ -13,21 +13,21 @@ see the output at the end of the section
     for REPLY (note ok prove)
         alias $REPLY=devel/TAP/$REPLY
 
-    test_multios () { 
+    test_multios () {
 
-        note "create temporary files" 
+        note "create temporary files"
 
         local a b
-        a=`mktemp` b=`mktemp` 
+        a=`mktemp` b=`mktemp`
 
         [[ -f $a ]]; ok "mktemp a worked fine"
         [[ -f $b ]]; ok "mktemp b worked fine"
 
         note "the actual use of multios redirection"
-        echo foo > $a > $b  
+        echo foo > $a > $b
 
-        cmp $a $b; ok "files are the same"  
-        
+        cmp $a $b; ok "files are the same"
+
         note "removing temp files"
         rm $a $b |&:
     }
