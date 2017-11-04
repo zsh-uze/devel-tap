@@ -22,7 +22,11 @@ devel/TAP/ok () {
     return $_tap_test_r
 }
 
-devel/TAP/not_ok () { ! (( $? )); ok "$@" }
+devel/TAP/not_ok () {
+    local r=$?
+    ! (( $? )); ok "$@"
+    return $r
+}
 
 devel/TAP/note () {
     local r=$?
@@ -42,12 +46,7 @@ devel/TAP/isnt () { ! [[ "$1" == "$2" ]]; devel/TAP/ok "$3" }
 devel/TAP/expected   () { devel/TAP/is   "$got" "$expected" "$1" }
 devel/TAP/unexpected () { devel/TAP/isnt "$got" "$expected" "$1" }
 
-devel/TAP/_export_ () {
-    typeset -A all; all=( ok prove is note )
-    fns $all
-    tag :all $fns
-}
-
-uze/import/devel/TAP () {
-    EXPORT_TAGS=( :all 'ok prove is note expected diag' )
+uze/export/devel/TAP () {
+    delegate=true
+    EXPORT_TAGS=( :all 'ok not_ok prove is note expected diag' )
 }
