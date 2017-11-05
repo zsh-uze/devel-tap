@@ -42,8 +42,8 @@ TAP/prove () {
         (( r )) ; print -lP "%(?'$v') $(( ++TAPCTX[index] )) - $*"
         return $r }'
 
-TAP/is   () {   [[ "$1" == "$2" ]]; TAP/ok "$3" }
-TAP/isnt () { ! [[ "$1" == "$2" ]]; TAP/ok "$3" }
+TAP/is   () {   [[ "$1" == "$2" ]]; TAP/ok "${3:-\"$1\" == \"$2\" }" }
+TAP/isnt () { ! [[ "$1" == "$2" ]]; TAP/ok "${3:-\"$1\" == \"$2\" }" }
 TAP/expected   () { TAP/is   "$got" "$expected" "${1:- got $got when $expected expected}" }
 TAP/unexpected () { TAP/isnt "$got" "$expected" "${1:- got $got when $expected expected}" }
 TAP/note () { local r=$?  ; say '# '$^@   ; return $r }
