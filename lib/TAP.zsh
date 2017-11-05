@@ -1,52 +1,55 @@
-TAP/prove () {
-    typeset -A with
-    while [[ $argv[1] = :* ]] { with+=( $argv[1,2] ); shift 2 }
+TAP/plan/announce () { print ${TAPCTX[start]}..${TAPCTX[plan]} }
 
-    (( ${+with[:plan]} )) && print 1..$with[:plan]
-
-    local got expected
-    local _test_tap_index=0
-    "$@"
-
-    (( ${+with[:plan]} )) || print 1..$_test_tap_index
-
+TAP/plan () {
+    TAPCTX[plan]=${1?number of tests in the new plan}
+    TAP/plan/announce
 }
 
-TAP/ok () {
-    local _tap_test_r=$?
-    if (( !_tap_test_r )) {
-        print "ok $[++_test_tap_index] $1"
-    } else {
-        print "not ok $[++_test_tap_index] $1"
+TAP/set () { TAPCTX+=( "$@" ) }
+TAP/start () {
+    TAP/set "$@"
+    (( TAPCTX[plan] )) && TAP/plan/announce }
+
+TAP/done () {
+    case $TAPCTX[plan] {
+        (0) print ${TAPCTX[start]}..${TAPCTX[index]} ;;
+        (*) (( TAPCTX[index] == TAPCTX[plan] )) || {
+                false;
+                ok "planned to run ${TAPCTX[plan]} and run ${TAPCTX[index]} of them"
+            }
     }
-    return $_tap_test_r
 }
 
-TAP/not_ok () {
-    local r=$?
-    ! (( $? )); ok "$@"
-    return $r
-}
+# not ok 5 - planned to run 3 but done_testing() expects 4
+# #   Failed test 'planned to run 3 but done_testing() expects 4'
+# #   #   at /tmp/a.pl line 6.
+# #   # Looks like you planned 3 tests but ran 5.
+# #   # Looks like you failed 1 test of 5 run
+# #   '
 
-TAP/note () {
-    local r=$?
-    print "# $*"
-    return $r
-}
 
-TAP/note- () {
-    local r=$?
-    sed 's/^/# /'
-    print "# $*"
-    return $r
-}
+alias TAP/do='my% TAPCTX=( index 0 start 1 plan 0 ); TAP/start'
+
+TAP/prove () {
+    TAP/do
+    "$@"
+    TAP/done }
+
+% ( ok     '.not ok.ok'
+    not_ok '.ok.not ok' )
+        eval 'TAP/'$k' () {
+        local r=$?
+        (( r )) ; print -lP "%(?'$v') $(( ++TAPCTX[index] )) - $*"
+        return $r }'
 
 TAP/is   () {   [[ "$1" == "$2" ]]; TAP/ok "$3" }
 TAP/isnt () { ! [[ "$1" == "$2" ]]; TAP/ok "$3" }
-TAP/expected   () { TAP/is   "$got" "$expected" "$1" }
-TAP/unexpected () { TAP/isnt "$got" "$expected" "$1" }
+TAP/expected   () { TAP/is   "$got" "$expected" "${1:- got $got when $expected expected}" }
+TAP/unexpected () { TAP/isnt "$got" "$expected" "${1:- got $got when $expected expected}" }
+TAP/note () { local r=$?  ; say '# '$^@   ; return $r }
+TAP/note- () { local r=$? ; sed 's/^/# /' ; return $r }
 
 uze/export/TAP () {
     delegate=true
-    EXPORT_TAGS=( :all 'ok not_ok prove is note expected diag' )
+    EXPORT_TAGS=( :all 'ok not_ok plan is isnt note note- expected unexpected' )
 }
