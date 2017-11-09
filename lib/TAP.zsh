@@ -7,8 +7,10 @@ TAP/plan () {
 
 TAP/set () { TAPCTX+=( "$@" ) }
 TAP/start () {
-    TAP/set "$@"
-    (( TAPCTX[plan] )) && TAP/plan/announce }
+    TAP/set plan 0 index 0 "$@"
+    (( TAPCTX[plan] )) &&
+        TAP/plan/announce
+}
 
 TAP/done () {
     case $TAPCTX[plan] {
