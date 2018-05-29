@@ -53,5 +53,5 @@ TAP/note- () { local r=$? ; sed 's/^/# /' ; return $r }
 
 uze/export/TAP () {
     delegate=true
-    EXPORT_TAGS=( :all 'ok not_ok plan is isnt note note- expected unexpected' )
+    EXPORT_TAGS=( :all 'prove ok not_ok plan is isnt note note- expected unexpected' )
 }
